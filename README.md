@@ -1,5 +1,14 @@
 # Acme Corp Minecraft Server Automation
 ## CS 312 Course Project Part 2
+Ah! Your first day on the job! You recently got hired as a system administrator for Acme Corp. Rumor has it that the previous sysadmin got caught by InfoSec for using his work computer to watch NSFW content. Terminated in less than a week. Ruthless HR.
+
+Your manager tells you that the most pressing item is to get the Minecraft server back up and running. Employees are growing restless.
+
+It seems your predecessor did a lot of their tasks manually, but at least they did a decent job of documenting their work. 
+
+You want to showcase your skills and (maybe?) get fast-tracked for a promotion. You crack your knuckles and get to work.
+
+
 
 ## 📚 Background
 In this project, we’ll fully automate the provisioning, configuration, and deployment of an AWS-hosted Minecraft server for Acme Corp. Everything is scripted using Terraform (infra) and Ansible (config). No need to ssh or even touch the AWS console. 
