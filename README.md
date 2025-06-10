@@ -17,6 +17,7 @@ In this project, we’ll fully automate the provisioning, configuration, and dep
 
 Before you begin, ensure you have the following installed and configured:
 
+- **WLS2** Everything should be ran in WSL or on a linux machine
 - **AWS CLI v2** configured with a named profile (`acme-minecraft`) in `~/.aws/credentials`.
 - **Terraform CLI**
 - **Ansible CLI**
@@ -34,33 +35,6 @@ Verify it works:
 
 ```bash
 aws sts get-caller-identity --profile acme-minecraft
-```
-
-## 📈 Architecture Diagram
-```mermaid
-flowchart LR
-  subgraph Control_Plane
-    CLI[Terraform & Ansible CLI]
-    Env["~/.ssh/minecraft<br/>AWS Profile"]
-  end
-
-  subgraph AWS["AWS Account"]
-    direction TB
-    IGW[Internet Gateway]
-    RT[Route Table]
-    VPC[VPC<br/>10.0.0.0/16]
-    SUB[Public Subnet<br/>10.0.1.0/24]
-    SG[Security Group<br/>TCP 22,25565]
-    EC2[EC2 Instance<br/>Ubuntu 22.04]
-  end
-
-  CLI -->|API calls| VPC
-  VPC --> SUB
-  SUB --> IGW
-  SUB --> SG
-  SG --> EC2
-  CLI -->|SSH on 22| EC2
-  User[“Minecraft Client”] -->|25565| EC2
 ```
 
 ## ⚙️ Pipeline Steps
@@ -108,3 +82,12 @@ flowchart LR
 2. Go to **Multiplayer → Direct Connect**.
 3. Enter the server IP from the output of terraform apply `terraform output -raw server_ip`
 4. Hit **Join Server**.
+
+
+## Resources / Sources
+
+- https://developer.hashicorp.com/terraform/tutorials/aws 
+- https://registry.terraform.io/providers/hashicorp/aws/latest/docs
+- https://www.minecraft.net/en-us/download/server
+- https://github.com/purple52/minecraft-ansible
+- https://medium.com/@alexlnguyen/deploying-a-minecraft-1-12-1-server-with-ansible-a1bc03c948b3
