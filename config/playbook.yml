@@ -1,0 +1,88 @@
+---
+- name: Configure Minecraft Server
+  hosts: minecraft
+  become: yes
+  tasks:
+    - name: Install apt prereqs for PPAs
+      apt:
+        name:
+          - software-properties-common
+        update_cache: yes
+        state: present
+      when: ansible_os_family == "Debian"
+
+    - name: Add OpenJDK PPA for Java 21
+      apt_repository:
+        repo: ppa:openjdk-r/ppa
+        state: present
+      when: ansible_os_family == "Debian"
+
+    - name: Install Java 21 JRE
+      apt:
+        name: openjdk-21-jre-headless
+        update_cache: yes
+        state: latest
+      when: ansible_os_family == "Debian"
+
+
+    - name: Create minecraft user
+      user:
+        name: minecraft
+        shell: /bin/bash
+        system: yes
+        create_home: no
+
+    - name: Create server directory
+      file:
+        path: /opt/minecraft
+        state: directory
+        owner: minecraft
+        group: minecraft
+        mode: "0755"
+
+    - name: Download Minecraft server.jar
+      get_url:
+        url: https://piston-data.mojang.com/v1/objects/e6ec2f64e6080b9b5d9b471b291c33cc7f509733/server.jar
+        dest: /opt/minecraft/server.jar
+        owner: minecraft
+        group: minecraft
+        mode: "0755"
+
+    - name: Upload systemd service
+      copy:
+        dest: /etc/systemd/system/minecraft.service
+        content: |
+          [Unit]
+          Description=Minecraft Server
+          After=network.target
+
+          [Service]
+          User=minecraft
+          WorkingDirectory=/opt/minecraft
+          ExecStart=java -Xmx1G -jar server.jar nogui
+          ExecStop=/bin/kill -SIGINT $MAINPID
+          Restart=on-failure
+
+          [Install]
+          WantedBy=multi-user.target
+        owner: root
+        mode: "0644"
+
+        
+    - name: Accept Minecraft EULA
+      copy:
+        dest: /opt/minecraft/eula.txt
+        content: |
+          eula=true
+        owner: minecraft
+        group: minecraft
+        mode: "0644"
+
+    - name: Reload systemd
+      command: systemctl daemon-reload
+
+    - name: Enable Minecraft service
+      systemd:
+        name: minecraft
+        enabled: yes
+        state: started

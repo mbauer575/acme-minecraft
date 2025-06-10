@@ -1,0 +1,13 @@
+/infra/.terraform
+# Ignore Terraform state files
+/infra/*.tfstate
+# Ignore Terraform plan files
+/infra/*.tfplan
+# Ignore Terraform variable files
+/infra/*.tfvars
+# Ignore Terraform lock files
+/infra/.terraform.lock.hcl
+/infra/.terraform.tfstate.lock.info
+# Ignore Terraform workspace files
+/infra/.terraform.tfstate
+/infra/terraform.tfstate.backup
