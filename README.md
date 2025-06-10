@@ -37,7 +37,31 @@ aws sts get-caller-identity --profile acme-minecraft
 ```
 
 ## 📈 Architecture Diagram
+```mermaid
+flowchart LR
+  subgraph Control_Plane
+    CLI[Terraform & Ansible CLI]
+    Env["~/.ssh/minecraft<br/>AWS Profile"]
+  end
 
+  subgraph AWS["AWS Account"]
+    direction TB
+    IGW[Internet Gateway]
+    RT[Route Table]
+    VPC[VPC<br/>10.0.0.0/16]
+    SUB[Public Subnet<br/>10.0.1.0/24]
+    SG[Security Group<br/>TCP 22,25565]
+    EC2[EC2 Instance<br/>Ubuntu 22.04]
+  end
+
+  CLI -->|API calls| VPC
+  VPC --> SUB
+  SUB --> IGW
+  SUB --> SG
+  SG --> EC2
+  CLI -->|SSH on 22| EC2
+  User[“Minecraft Client”] -->|25565| EC2
+```
 
 ## ⚙️ Pipeline Steps
 
